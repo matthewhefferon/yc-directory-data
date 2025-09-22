@@ -36,6 +36,15 @@ export default function CompanyTable({
                 Status
               </th>
               <th className="px-4 py-3 text-left text-sm font-semibold text-black border-b border-gray-200 whitespace-nowrap">
+                Hiring
+              </th>
+              <th className="px-4 py-3 text-left text-sm font-semibold text-black border-b border-gray-200 whitespace-nowrap">
+                Top Company
+              </th>
+              <th className="px-4 py-3 text-left text-sm font-semibold text-black border-b border-gray-200 whitespace-nowrap">
+                Nonprofit
+              </th>
+              <th className="px-4 py-3 text-left text-sm font-semibold text-black border-b border-gray-200 whitespace-nowrap">
                 Website
               </th>
             </tr>
@@ -100,6 +109,15 @@ export default function CompanyTable({
                 </td>
                 <td className="px-4 py-3 text-sm text-black border-b border-gray-100 whitespace-nowrap">
                   {c.status || "N/A"}
+                </td>
+                <td className="px-4 py-3 text-sm border-b border-gray-100 whitespace-nowrap">
+                  {c.is_hiring ? "Yes" : "No"}
+                </td>
+                <td className="px-4 py-3 text-sm border-b border-gray-100 whitespace-nowrap">
+                  {c.top_company ? "Yes" : "No"}
+                </td>
+                <td className="px-4 py-3 text-sm border-b border-gray-100 whitespace-nowrap">
+                  {c.nonprofit ? "Yes" : "No"}
                 </td>
                 <td className="px-4 py-3 text-sm border-b border-gray-100 whitespace-nowrap">
                   {c.website ? (

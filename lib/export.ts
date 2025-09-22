@@ -1,25 +1,23 @@
 import { Parser } from "json2csv";
 
 export function exportToCsv(data: any[]) {
-  // Flatten the data structure for CSV export
+  // Export only the columns that match the table display
   const flattenedData = data.map((company) => ({
-    company_id: company.company_id || company.id,
     company_name: company.company_name || company.name,
     short_description: company.short_description || company.one_liner,
-    long_description: company.long_description,
     batch: company.batch,
-    status: company.status,
-    tags: company.tags ? company.tags.join(", ") : "",
-    location: company.location,
-    country: company.country,
+    industry: company.tags ? company.tags.join(", ") : "",
+    location:
+      company.location && company.country
+        ? `${company.location}, ${company.country}`
+        : company.location || company.country || "N/A",
     year_founded: company.year_founded || company.founded,
     team_size: company.team_size,
+    status: company.status,
+    is_hiring: company.is_hiring ? "Yes" : "No",
+    top_company: company.top_company ? "Yes" : "No",
+    nonprofit: company.nonprofit ? "Yes" : "No",
     website: company.website,
-    logo_url: company.logo_url,
-    slug: company.slug,
-    is_hiring: company.is_hiring,
-    top_company: company.top_company,
-    nonprofit: company.nonprofit,
   }));
 
   const parser = new Parser();
@@ -30,25 +28,20 @@ export function exportToCsv(data: any[]) {
 
 export function exportToSql(data: any[]) {
   const schema = `
--- YC Companies Database Schema
+-- YC Companies Database Schema (matches table display)
 CREATE TABLE yc_companies (
-  company_id INT PRIMARY KEY,
   company_name VARCHAR(255) NOT NULL,
   short_description TEXT,
-  long_description TEXT,
   batch VARCHAR(50),
-  status VARCHAR(50),
-  tags TEXT,
+  industry TEXT,
   location VARCHAR(255),
-  country VARCHAR(100),
   year_founded INT,
   team_size INT,
+  status VARCHAR(50),
+  is_hiring VARCHAR(10),
+  top_company VARCHAR(10),
+  nonprofit VARCHAR(10),
   website VARCHAR(500),
-  logo_url VARCHAR(500),
-  slug VARCHAR(255),
-  is_hiring BOOLEAN DEFAULT FALSE,
-  top_company BOOLEAN DEFAULT FALSE,
-  nonprofit BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -73,24 +66,24 @@ CREATE INDEX idx_is_hiring ON yc_companies(is_hiring);
       .map((c) => {
         const escape = (str: any) =>
           str ? str.toString().replace(/'/g, "''") : "";
-        return `(${c.company_id || c.id}, '${escape(
-          c.company_name || c.name
-        )}', '${escape(c.short_description || c.one_liner)}', '${escape(
-          c.long_description
-        )}', '${escape(c.batch)}', '${escape(c.status)}', '${escape(
+        return `('${escape(c.company_name || c.name)}', '${escape(
+          c.short_description || c.one_liner
+        )}', '${escape(c.batch)}', '${escape(
           c.tags ? c.tags.join(", ") : ""
-        )}', '${escape(c.location)}', '${escape(c.country)}', ${
-          c.year_founded || c.founded || "NULL"
-        }, ${c.team_size || "NULL"}, '${escape(c.website)}', '${escape(
-          c.logo_url
-        )}', '${escape(c.slug)}', ${c.is_hiring ? "TRUE" : "FALSE"}, ${
-          c.top_company ? "TRUE" : "FALSE"
-        }, ${c.nonprofit ? "TRUE" : "FALSE"})`;
+        )}', '${escape(
+          c.location && c.country
+            ? `${c.location}, ${c.country}`
+            : c.location || c.country || "N/A"
+        )}', ${c.year_founded || c.founded || "NULL"}, ${
+          c.team_size || "NULL"
+        }, '${escape(c.status)}', '${c.is_hiring ? "Yes" : "No"}', '${
+          c.top_company ? "Yes" : "No"
+        }', '${c.nonprofit ? "Yes" : "No"}', '${escape(c.website)}')`;
       })
       .join(",\n    ");
 
     batches.push(
-      `INSERT INTO yc_companies (company_id, company_name, short_description, long_description, batch, status, tags, location, country, year_founded, team_size, website, logo_url, slug, is_hiring, top_company, nonprofit) VALUES\n    ${values};`
+      `INSERT INTO yc_companies (company_name, short_description, batch, industry, location, year_founded, team_size, status, is_hiring, top_company, nonprofit, website) VALUES\n    ${values};`
     );
   }
 

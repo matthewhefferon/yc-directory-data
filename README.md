@@ -4,7 +4,7 @@
 
 ![YC Directory Data Screenshot](./public/screenshot.png)
 
-A modern web application for exploring Y Combinator's portfolio of 5,400+ companies. Built with Next.js and powered by the community-maintained yc-oss API.
+A modern web application for exploring Y Combinator's portfolio of 5,400+ companies. Built with Next.js and powered by the community-maintained [yc-oss/api](https://github.com/yc-oss/api).
 
 ## Features
 
@@ -78,9 +78,7 @@ This application uses the [yc-oss/api](https://github.com/yc-oss/api) public API
 
 Each company record includes:
 
-- `company_id`: Unique identifier
 - `company_name`: Company name
-- `logo_url`: Company logo image URL
 - `short_description`: Company one-liner description
 - `batch`: YC batch (e.g., "Summer 2013", "W24")
 - `industry`: Company industry tags
@@ -88,6 +86,9 @@ Each company record includes:
 - `year_founded`: Year the company was founded
 - `team_size`: Number of team members
 - `status`: Company status (Public, Private, etc.)
+- `is_hiring`: Whether the company is currently hiring (Yes/No)
+- `top_company`: Whether it's a top YC company (Yes/No)
+- `nonprofit`: Whether it's a nonprofit organization (Yes/No)
 - `website`: Company website URL
 
 ## Tech Stack

@@ -16,6 +16,7 @@ export default function Home() {
     status: "",
     industry: "",
     search: "",
+    other: "",
   });
   const [showFilters, setShowFilters] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -67,6 +68,15 @@ export default function Home() {
             ?.toLowerCase()
             .includes(filters.search.toLowerCase())
       );
+    }
+    if (filters.other) {
+      if (filters.other === "top_company") {
+        filtered = filtered.filter((c) => c.top_company);
+      } else if (filters.other === "is_hiring") {
+        filtered = filtered.filter((c) => c.is_hiring);
+      } else if (filters.other === "nonprofit") {
+        filtered = filtered.filter((c) => c.nonprofit);
+      }
     }
 
     // Sort by batch from newest to oldest
