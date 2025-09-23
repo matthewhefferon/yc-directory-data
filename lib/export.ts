@@ -64,8 +64,18 @@ CREATE INDEX idx_is_hiring ON yc_companies(is_hiring);
     const batch = data.slice(i, i + batchSize);
     const values = batch
       .map((c) => {
-        const escape = (str: any) =>
-          str ? str.toString().replace(/'/g, "''") : "";
+        const escape = (str: any) => {
+          if (!str) return "";
+          return str
+            .toString()
+            .replace(/'/g, "''") // Escape single quotes
+            .replace(/\r\n/g, " ") // Replace Windows line endings
+            .replace(/\n/g, " ") // Replace Unix line endings
+            .replace(/\r/g, " ") // Replace Mac line endings
+            .replace(/[\u2028\u2029]/g, " ") // Replace line/paragraph separators
+            .replace(/[\u0000-\u001F\u007F-\u009F]/g, " ") // Replace control characters
+            .trim();
+        };
         return `('${escape(c.company_name || c.name)}', '${escape(
           c.short_description || c.one_liner
         )}', '${escape(c.batch)}', '${escape(
